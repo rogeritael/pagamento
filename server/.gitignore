@@ -1,0 +1,4 @@
+node_modules
+
+# Não versionamos o .env por conter informações que não podem ser compartilhadas
+.env
