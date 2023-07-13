@@ -1,0 +1,1 @@
+criei o arquivo docker-compose.yml para rodar o mongoDB
