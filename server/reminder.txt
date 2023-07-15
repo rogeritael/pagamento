@@ -1,1 +1,13 @@
 criei o arquivo docker-compose.yml para rodar o mongoDB
+
+
+// LIBS //
+
+npm install yup
+ - validador de schema
+
+npm install libphonenumber-js
+ - validador de telefone
+
+npm install cpf-cnpj-validator
+ - validador de cpf e cnpj
