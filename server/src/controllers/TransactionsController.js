@@ -3,6 +3,7 @@ import parsePhoneNumber from 'libphonenumber-js';
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 
 import Cart from '../models/Cart';
+import TransactionService from "../services/TransactionService";
 
 class TransactionsController {
     async create(req, res){
@@ -71,20 +72,45 @@ class TransactionsController {
             }
 
             //verifica se o cart existe
-            const cart = Cart.findOne({ code: cartCode });
+            const cart = await Cart.findOne({ code: cartCode });
             if(!cart){
-                return res.status(404).json()
+                return res.status(404).json({error: 'cart not found'})
             }
 
             //criar transação (registro)
-
+            const service = new TransactionService();
+            const response = await service.process({
+                cartCode,
+                paymentType,
+                installments,
+                customer: {
+                    name: customerName, 
+                    email: customerEmail, 
+                    mobile: customerMobile,
+                    document: customerDocument,
+                },
+                billing: {
+                    address: billingAddress,
+                    number: billingNumber,
+                    neighborhood: billingNeighborhood,
+                    city: billingCity,
+                    state: billingState,
+                    zipcode: billingZipCode,
+                },
+                creditCard: {
+                    number: creditCardNumber,
+                    expiration: creditCardExpiration,
+                    holderName: creditCardHolderName,
+                    cvv: creditCardCvv,
+                },
+            })
             //integrar com o pagarme
 
             //processar regras (status)
-            return res.status(200).json()
+            return res.status(200).json(response)
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: "Internal server error." });
+            return res.status(500).json({ error });
         }
     }
 }

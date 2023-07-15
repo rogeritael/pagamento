@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid"
+
 import Cart from "../models/Cart";
 import Transaction from "../models/Transaction";
 
@@ -11,15 +13,14 @@ class TransactionService {
         creditCard
     }){
 
-        const cart = Cart.findOne({ cartCode });
-    
+        const cart = await Cart.findOne({ code: cartCode });
         if(!cart){
             throw `Cart ${cartCode} was not found.`;
         }
 
         const transaction = await Transaction.create({
             cartCode: cart.code,
-            code: 'abc123', //arrumar
+            code: await uuidv4(), 
             total: cart.price,
             paymentType,
             installments,
@@ -39,3 +40,5 @@ class TransactionService {
         return transaction;
     } 
 }
+
+export default TransactionService;
