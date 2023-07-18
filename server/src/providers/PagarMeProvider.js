@@ -53,11 +53,48 @@ class PagarMeProvider {
                 documents: [
                     {
                         type: cpf.isValid(customer.document) ? "cpf" : "cnpj",
-                        number: customer.document.replace(/[^?0-9]/g,"")
+                        number: customer.document.replace(/[^?0-9]/g,""),
                     }
                 ]
             }
         }
+
+        //se for ecommerce, precisa das informações
+        const billingParams = billing?.zipcode ? {
+            billing: {
+                name: "Billing Address",
+                address: {
+                    country: "br",
+                    state: billing.state,
+                    city: billing.city,
+                    neighborhood: billing.neighborhood,
+                    street: billing.street,
+                    street_number: billing.number,
+                    zipcode: billing.zipcode,
+                },
+            }
+        } : { }
+
+        const itemsParams = items && items.length > 0 ? {
+            items: items.map((item) => ({
+                id: item?.id.toString(),
+                title: item?.title,
+                unit_price: item?.amount * 100,
+                quantity: item?.quantity || 1,
+                tangible: false,
+            }))
+
+        } : { 
+            items: [
+                {
+                    id: "1",
+                    title: `t-${transactionCode}`,
+                    unit_price: total * 100,
+                    quantity: 1,
+                    tangible: false,
+                }
+            ]
+         }
 
         const transactionParams = {
 
