@@ -68,7 +68,7 @@ class PagarMeProvider {
                     state: billing.state,
                     city: billing.city,
                     neighborhood: billing.neighborhood,
-                    street: billing.street,
+                    street: billing.address,
                     street_number: billing.number,
                     zipcode: billing.zipcode,
                 },
@@ -95,11 +95,25 @@ class PagarMeProvider {
                 }
             ]
          }
-
-        const transactionParams = {
-
+        
+        //Aqui é tudo que você quiser guardar no metadata do pagarME
+        const metadataParams = {
+            metadata: {
+                transaction_code: transactionCode,
+            }
         }
 
+        const transactionParams = {
+            async: false, //quero enviar para o processamento e esperar a resposta
+            // postback_url: '',
+            ...paymentParams,
+            ...customerParams,
+            ...billingParams,
+            ...itemsParams,
+            ...metadataParams,
+        }
+
+        console.debug(transactionParams)
     }
 }
 

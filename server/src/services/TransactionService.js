@@ -3,7 +3,15 @@ import { v4 as uuidv4 } from "uuid"
 import Cart from "../models/Cart";
 import Transaction from "../models/Transaction";
 
+import PagarMeProvider from "../providers/PagarMeProvider";
+
 class TransactionService {
+    paymentProvider; // no ts -> private paymentProvider
+
+    constructor(paymentProvider){
+        this.paymentProvider = paymentProvider || new PagarMeProvider();
+    }
+
     async process({
         cartCode,
         paymentType,
@@ -36,6 +44,17 @@ class TransactionService {
             billingState: billing.state,
             billingZipCode: billing.zipcode,
         });
+
+        //pegando o método paymentProvider declarado lá em cima
+        this.paymentProvider.process({
+            transactionCode: transaction.code,
+            paymentType,
+            total: transaction.total,
+            installments,
+            creditCard,
+            billing,
+            customer
+        })
 
         return transaction;
     } 
