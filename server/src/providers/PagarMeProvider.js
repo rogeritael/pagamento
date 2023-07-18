@@ -1,3 +1,5 @@
+import { cpf } from "cpf-cnpj-validator";
+
 class PagarMeProvider {
     async process({
         transactionCode,
@@ -40,6 +42,22 @@ class PagarMeProvider {
         }
 
         //parametros de usuário
+        const customerParams = {
+            customer: {
+                external_id: customer.email,
+                name: customer.name,
+                email: customer.email,
+                type: cpf.isValid(customer.document) ? "individual" : "corporation",
+                country: "br",
+                phone_numbers: [ customer.mobile ],
+                documents: [
+                    {
+                        type: cpf.isValid(customer.document) ? "cpf" : "cnpj",
+                        number: customer.document.replace(/[^?0-9]/g,"")
+                    }
+                ]
+            }
+        }
 
         const transactionParams = {
 
